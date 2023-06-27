@@ -1,0 +1,19 @@
+{
+  "name": "shed-fonts",
+  "version": "1.0.0",
+  "description": "fonts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shedya/fonts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shedya/fonts/issues"
+  },
+  "homepage": "https://github.com/shedya/fonts#readme"
+}
