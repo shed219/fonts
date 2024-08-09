@@ -1,10 +1,6 @@
 {
   "name": "shed-fonts",
-<<<<<<< Updated upstream
-  "version": "1.0.3",
-=======
   "version": "1.0.4",
->>>>>>> Stashed changes
   "description": "fonts",
   "main": "index.js",
   "scripts": {
