@@ -2,28 +2,19 @@ name: Publish Package to npmjs
 
 on:
   push:
-    branches:
-      - main # 当推送到 main 分支时触发
-
+    branches: [ main ]
+    
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: '18.x' # 使用最新的 LTS 版本
           registry-url: 'https://registry.npmjs.org'
-          
-      - name: Install dependencies
-        run: npm install
-        
-      - name: Bump version and publish
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          # 可选参数，用于配置版本号递增规则
-          # 默认递增 patch 版本号
-          bump-minor-pre-major: true # pre-major 版本优先递增 minor 版本号
-          # 其他可选参数，例如 tag, access 等，请参考插件文档
-          # https://github.com/JS-DevTools/npm-publish
+      - run: npm i # 使用 npm ci 确保干净的安装
+      - run: npm whoami
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
