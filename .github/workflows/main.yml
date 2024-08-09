@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: '18.x' # 使用最新的 LTS 版本
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci # 使用 npm ci 确保干净的安装
+      - run: npm i
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
