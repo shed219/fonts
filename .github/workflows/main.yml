@@ -11,6 +11,7 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -69,7 +70,8 @@ jobs:
       - name: Set publish version
         run: npm version ${{ steps.version.outputs.next }} --no-git-tag-version
 
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish
+      - name: Ensure npm supports OIDC
+        run: npm install -g npm@latest
+
+      - name: Publish to npm (OIDC)
+        run: npm publish --provenance
