@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shedya/fonts.git"
+    "url": "git+https://github.com/shed219/fonts.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/shedya/fonts/issues"
+    "url": "https://github.com/shed219/fonts/issues"
   },
-  "homepage": "https://github.com/shedya/fonts#readme"
+  "homepage": "https://github.com/shed219/fonts#readme"
 
 }
