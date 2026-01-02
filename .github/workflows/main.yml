@@ -72,8 +72,21 @@ jobs:
       - name: Ensure npm supports OIDC
         run: npm install -g npm@latest
 
+      - name: Ensure no npm token env vars
+        run: |
+          if [ -n "${NPM_TOKEN:-}" ] || [ -n "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "NPM_TOKEN/NODE_AUTH_TOKEN detected; remove tokens for OIDC publishing." >&2
+            exit 1
+          fi
+
+      - name: Prepare clean npm config for OIDC
+        run: |
+          printf '%s\n' "registry=https://registry.npmjs.org/" > "${RUNNER_TEMP}/npmrc"
+
       - name: Remove npm token config
         run: npm config delete //registry.npmjs.org/:_authToken || true
 
       - name: Publish to npm (OIDC)
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npmrc
         run: npm publish --provenance
