@@ -22,12 +22,54 @@ jobs:
           node-version: 18.x
           registry-url: 'https://registry.npmjs.org'
         
-      - name: Bump version and publish
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          # 可选参数，用于配置版本号递增规则
-          # 默认递增 patch 版本号
-          bump-minor-pre-major: true # pre-major 版本优先递增 minor 版本号
-          # 其他可选参数，例如 tag, access 等，请参考插件文档
-          # https://github.com/JS-DevTools/npm-publish
+      - name: Determine publish version
+        id: version
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const name = pkg.name;
+          const current = pkg.version;
+
+          const parse = (v) => v.split('.').map((n) => parseInt(n, 10));
+          const cmp = (a, b) => {
+            for (let i = 0; i < 3; i += 1) {
+              if (a[i] > b[i]) return 1;
+              if (a[i] < b[i]) return -1;
+            }
+            return 0;
+          };
+
+          let currentPublished = false;
+          try {
+            execSync(`npm view ${name}@${current} version`, { stdio: 'pipe' });
+            currentPublished = true;
+          } catch {
+            currentPublished = false;
+          }
+
+          let next = current;
+          if (currentPublished) {
+            let latest = current;
+            try {
+              latest = execSync(`npm view ${name} version`, { encoding: 'utf8' }).trim();
+            } catch {
+              latest = current;
+            }
+
+            const base = cmp(parse(latest), parse(current)) > 0 ? latest : current;
+            const [major, minor, patch] = parse(base);
+            next = [major, minor, patch + 1].join('.');
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `next=${next}\n`);
+          NODE
+
+      - name: Set publish version
+        run: npm version ${{ steps.version.outputs.next }} --no-git-tag-version
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
